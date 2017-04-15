@@ -36,7 +36,7 @@ var (
 	)
 
 	listenAddress = flag.String(
-		"web.listen-address", ":9190",
+		"web.listen-address", ":9194",
 		"Address to listen on for web interface and telemetry ($BOSH_TSDB_EXPORTER_WEB_LISTEN_ADDRESS).",
 	)
 
