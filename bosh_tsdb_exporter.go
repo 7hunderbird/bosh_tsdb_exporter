@@ -26,7 +26,7 @@ var (
 	)
 
 	tsdbListenAddress = flag.String(
-		"tsdb.listen-address", ":4242",
+		"tsdb.listen-address", ":13321",
 		"Address to listen on for the TSDB collector ($BOSH_TSDB_EXPORTER_TSDB_LISTEN_ADDRESS).",
 	)
 
