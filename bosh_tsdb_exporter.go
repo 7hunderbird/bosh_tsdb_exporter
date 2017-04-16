@@ -16,7 +16,7 @@ import (
 
 var (
 	metricsNamespace = flag.String(
-		"metrics.namespace", "bosh",
+		"metrics.namespace", "bosh_tsdb",
 		"Metrics Namespace ($BOSH_TSDB_EXPORTER_METRICS_NAMESPACE).",
 	)
 

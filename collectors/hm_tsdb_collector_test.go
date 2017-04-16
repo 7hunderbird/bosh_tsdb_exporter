@@ -27,27 +27,27 @@ var _ = Describe("HMTSDBCollector", func() {
 		tsdbListener    net.Listener
 		hmTSDBCollector *HMTSDBCollector
 
-		jobHealthyMetric                         *prometheus.GaugeVec
-		jobLoadAvg01Metric                       *prometheus.GaugeVec
-		jobCPUSysMetric                          *prometheus.GaugeVec
-		jobCPUUserMetric                         *prometheus.GaugeVec
-		jobCPUWaitMetric                         *prometheus.GaugeVec
-		jobMemKBMetric                           *prometheus.GaugeVec
-		jobMemPercentMetric                      *prometheus.GaugeVec
-		jobSwapKBMetric                          *prometheus.GaugeVec
-		jobSwapPercentMetric                     *prometheus.GaugeVec
-		jobSystemDiskInodePercentMetric          *prometheus.GaugeVec
-		jobSystemDiskPercentMetric               *prometheus.GaugeVec
-		jobEphemeralDiskInodePercentMetric       *prometheus.GaugeVec
-		jobEphemeralDiskPercentMetric            *prometheus.GaugeVec
-		jobPersistentDiskInodePercentMetric      *prometheus.GaugeVec
-		jobPersistentDiskPercentMetric           *prometheus.GaugeVec
-		totalHMTSDBReceivedMessagesMetric        prometheus.Counter
-		totalHMTSDBInvalidMessagesMetric         prometheus.Counter
-		totalHMTSDBDiscardedMessagesMetric       prometheus.Counter
-		lastHMTSDBReceivedMessageTimestampMetric prometheus.Gauge
-		lastHMTSDBScrapeTimestampMetric          prometheus.Gauge
-		lastHMTSDBScrapeDurationSecondsMetric    prometheus.Gauge
+		jobHealthyMetric                       *prometheus.GaugeVec
+		jobLoadAvg01Metric                     *prometheus.GaugeVec
+		jobCPUSysMetric                        *prometheus.GaugeVec
+		jobCPUUserMetric                       *prometheus.GaugeVec
+		jobCPUWaitMetric                       *prometheus.GaugeVec
+		jobMemKBMetric                         *prometheus.GaugeVec
+		jobMemPercentMetric                    *prometheus.GaugeVec
+		jobSwapKBMetric                        *prometheus.GaugeVec
+		jobSwapPercentMetric                   *prometheus.GaugeVec
+		jobSystemDiskInodePercentMetric        *prometheus.GaugeVec
+		jobSystemDiskPercentMetric             *prometheus.GaugeVec
+		jobEphemeralDiskInodePercentMetric     *prometheus.GaugeVec
+		jobEphemeralDiskPercentMetric          *prometheus.GaugeVec
+		jobPersistentDiskInodePercentMetric    *prometheus.GaugeVec
+		jobPersistentDiskPercentMetric         *prometheus.GaugeVec
+		totalReceivedTSDBMessagesMetric        prometheus.Counter
+		totalInvalidTSDBMessagesMetric         prometheus.Counter
+		totalDiscardedTSDBMessagesMetric       prometheus.Counter
+		lastReceivedTSDBMessageTimestampMetric prometheus.Gauge
+		lastHMTSDBScrapeTimestampMetric        prometheus.Gauge
+		lastHMTSDBScrapeDurationSecondsMetric  prometheus.Gauge
 
 		deploymentName                = "fake-deployment-name"
 		jobName                       = "fake-job-name"
@@ -375,11 +375,11 @@ var _ = Describe("HMTSDBCollector", func() {
 			jobIndex,
 		).Set(float64(jobPersistentDiskPercent))
 
-		totalHMTSDBReceivedMessagesMetric = prometheus.NewCounter(
+		totalReceivedTSDBMessagesMetric = prometheus.NewCounter(
 			prometheus.CounterOpts{
 				Namespace: namespace,
-				Subsystem: "hm_tsdb",
-				Name:      "received_messages_total",
+				Subsystem: "",
+				Name:      "received_tsdb_messages_total",
 				Help:      "Total number of BOSH HM TSDB received messages.",
 				ConstLabels: prometheus.Labels{
 					"environment": environment,
@@ -387,11 +387,11 @@ var _ = Describe("HMTSDBCollector", func() {
 			},
 		)
 
-		totalHMTSDBInvalidMessagesMetric = prometheus.NewCounter(
+		totalInvalidTSDBMessagesMetric = prometheus.NewCounter(
 			prometheus.CounterOpts{
 				Namespace: namespace,
-				Subsystem: "hm_tsdb",
-				Name:      "invalid_messages_total",
+				Subsystem: "",
+				Name:      "invalid_tsdb_messages_total",
 				Help:      "Total number of BOSH HM TSDB invalid messages.",
 				ConstLabels: prometheus.Labels{
 					"environment": environment,
@@ -399,11 +399,11 @@ var _ = Describe("HMTSDBCollector", func() {
 			},
 		)
 
-		totalHMTSDBDiscardedMessagesMetric = prometheus.NewCounter(
+		totalDiscardedTSDBMessagesMetric = prometheus.NewCounter(
 			prometheus.CounterOpts{
 				Namespace: namespace,
-				Subsystem: "hm_tsdb",
-				Name:      "discarded_messages_total",
+				Subsystem: "",
+				Name:      "discarded_tsdb_messages_total",
 				Help:      "Total number of BOSH HM TSDB discarded messages.",
 				ConstLabels: prometheus.Labels{
 					"environment": environment,
@@ -411,11 +411,11 @@ var _ = Describe("HMTSDBCollector", func() {
 			},
 		)
 
-		lastHMTSDBReceivedMessageTimestampMetric = prometheus.NewGauge(
+		lastReceivedTSDBMessageTimestampMetric = prometheus.NewGauge(
 			prometheus.GaugeOpts{
 				Namespace: namespace,
-				Subsystem: "hm_tsdb",
-				Name:      "last_received_message_timestamp",
+				Subsystem: "",
+				Name:      "last_received_tsdb_message_timestamp",
 				Help:      "Number of seconds since 1970 since last received message from BOSH HM TSDB.",
 				ConstLabels: prometheus.Labels{
 					"environment": environment,
@@ -598,20 +598,20 @@ var _ = Describe("HMTSDBCollector", func() {
 			).Desc())))
 		})
 
-		It("returns a hm_tsdb_received_messages_total metric description", func() {
-			Eventually(descriptions).Should(Receive(Equal(totalHMTSDBReceivedMessagesMetric.Desc())))
+		It("returns a received_tsdb_messages_total metric description", func() {
+			Eventually(descriptions).Should(Receive(Equal(totalReceivedTSDBMessagesMetric.Desc())))
 		})
 
-		It("returns a hm_tsdb_invalid_messages_total metric description", func() {
-			Eventually(descriptions).Should(Receive(Equal(totalHMTSDBInvalidMessagesMetric.Desc())))
+		It("returns a invalid_tsdb_messages_total metric description", func() {
+			Eventually(descriptions).Should(Receive(Equal(totalInvalidTSDBMessagesMetric.Desc())))
 		})
 
-		It("returns a hm_tsdb_discarded_messages_total metric description", func() {
-			Eventually(descriptions).Should(Receive(Equal(totalHMTSDBDiscardedMessagesMetric.Desc())))
+		It("returns a discarded_tsdb_messages_total metric description", func() {
+			Eventually(descriptions).Should(Receive(Equal(totalDiscardedTSDBMessagesMetric.Desc())))
 		})
 
-		It("returns a hm_tsdb_last_received_message_timestamp metric description", func() {
-			Eventually(descriptions).Should(Receive(Equal(lastHMTSDBReceivedMessageTimestampMetric.Desc())))
+		It("returns a last_tsdb_received_message_timestamp metric description", func() {
+			Eventually(descriptions).Should(Receive(Equal(lastReceivedTSDBMessageTimestampMetric.Desc())))
 		})
 
 		It("returns a last_hm_tsdb_scrape_timestamp metric description", func() {
@@ -653,7 +653,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.healthy message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.healthy %d 1 %s", time.Now().Unix(), tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_process_healthy metric", func() {
@@ -669,7 +669,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.load.1m message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.load.1m %d %f %s", time.Now().Unix(), jobLoadAvg01, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_load_avg01 metric", func() {
@@ -685,7 +685,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.cpu.sys message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.cpu.sys %d %f %s", time.Now().Unix(), jobCPUSys, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_cpu_sys metric", func() {
@@ -701,7 +701,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.cpu.user message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.cpu.user %d %f %s", time.Now().Unix(), jobCPUUser, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_cpu_user metric", func() {
@@ -717,7 +717,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.cpu.wait message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.cpu.wait %d %f %s", time.Now().Unix(), jobCPUWait, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_cpu_wait metric", func() {
@@ -733,7 +733,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.mem.kb message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.mem.kb %d %d %s", time.Now().Unix(), jobMemKB, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_mem_kb metric", func() {
@@ -749,7 +749,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.mem.percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.mem.percent %d %d %s", time.Now().Unix(), jobMemPercent, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_mem_percent metric", func() {
@@ -765,7 +765,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.swap.kb message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.swap.kb %d %d %s", time.Now().Unix(), jobSwapKB, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_swap_kb metric", func() {
@@ -781,7 +781,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.swap.percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.swap.percent %d %d %s", time.Now().Unix(), jobSwapPercent, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_swap_percent metric", func() {
@@ -797,7 +797,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.disk.system.inode_percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.disk.system.inode_percent %d %d %s", time.Now().Unix(), jobSystemDiskInodePercent, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_system_disk_inode_percent metric", func() {
@@ -813,7 +813,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.disk.system.percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.disk.system.percent %d %d %s", time.Now().Unix(), jobSystemDiskPercent, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_system_disk_percent metric", func() {
@@ -829,7 +829,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.disk.ephemeral.inode_percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.disk.ephemeral.inode_percent %d %d %s", time.Now().Unix(), jobEphemeralDiskInodePercent, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_ephemeral_disk_inode_percent metric", func() {
@@ -845,7 +845,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.disk.ephemeral.percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.disk.ephemeral.percent %d %d %s", time.Now().Unix(), jobEphemeralDiskPercent, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_ephemeral_disk_percent metric", func() {
@@ -861,7 +861,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.disk.persistent.inode_percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.disk.persistent.inode_percent %d %d %s", time.Now().Unix(), jobPersistentDiskInodePercent, tsdbTags)
-				totalHMTSDBReceivedMessagesMetric.Inc()
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_persistent_disk_inode_percent metric", func() {
@@ -877,6 +877,7 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a system.disk.persistent.percent message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put system.disk.persistent.percent %d %d %s", time.Now().Unix(), jobPersistentDiskPercent, tsdbTags)
+				totalReceivedTSDBMessagesMetric.Inc()
 			})
 
 			It("returns a job_persistent_disk_percent metric", func() {
@@ -893,22 +894,22 @@ var _ = Describe("HMTSDBCollector", func() {
 			Context("when does not have the right number of tokens", func() {
 				BeforeEach(func() {
 					tsdbMessage = fmt.Sprintf("put invalid.tsdb.message %d", time.Now().Unix())
-					totalHMTSDBInvalidMessagesMetric.Inc()
+					totalInvalidTSDBMessagesMetric.Inc()
 				})
 
-				It("returns a hm_tsdb_invalid_messages_total metric metric", func() {
-					Eventually(metrics).Should(Receive(PrometheusMetric(totalHMTSDBInvalidMessagesMetric)))
+				It("returns a invalid_tsdb_messages_total metric metric", func() {
+					Eventually(metrics).Should(Receive(PrometheusMetric(totalInvalidTSDBMessagesMetric)))
 				})
 			})
 
 			Context("when the value cannot be converted to a float", func() {
 				BeforeEach(func() {
 					tsdbMessage = fmt.Sprintf("put invalid.tsdb.message %d a %s", time.Now().Unix(), tsdbTags)
-					totalHMTSDBInvalidMessagesMetric.Inc()
+					totalInvalidTSDBMessagesMetric.Inc()
 				})
 
-				It("returns a hm_tsdb_invalid_messages_total metric metric", func() {
-					Eventually(metrics).Should(Receive(PrometheusMetric(totalHMTSDBInvalidMessagesMetric)))
+				It("returns a invalid_tsdb_messages_total metric metric", func() {
+					Eventually(metrics).Should(Receive(PrometheusMetric(totalInvalidTSDBMessagesMetric)))
 				})
 			})
 		})
@@ -916,11 +917,11 @@ var _ = Describe("HMTSDBCollector", func() {
 		Context("when a non supported tsdb message is received", func() {
 			BeforeEach(func() {
 				tsdbMessage = fmt.Sprintf("put invalid.tsdb.message %d 1 %s", time.Now().Unix(), tsdbTags)
-				totalHMTSDBDiscardedMessagesMetric.Inc()
+				totalDiscardedTSDBMessagesMetric.Inc()
 			})
 
-			It("returns a hm_tsdb_discarded_messages_total metric", func() {
-				Eventually(metrics).Should(Receive(PrometheusMetric(totalHMTSDBDiscardedMessagesMetric)))
+			It("returns a discarded_tsdb_messages_total metric", func() {
+				Eventually(metrics).Should(Receive(PrometheusMetric(totalDiscardedTSDBMessagesMetric)))
 			})
 		})
 	})

@@ -23,28 +23,28 @@ type HMMetric struct {
 }
 
 type HMTSDBCollector struct {
-	tsdbListener                             net.Listener
-	jobHealthyMetric                         *prometheus.GaugeVec
-	jobLoadAvg01Metric                       *prometheus.GaugeVec
-	jobCPUSysMetric                          *prometheus.GaugeVec
-	jobCPUUserMetric                         *prometheus.GaugeVec
-	jobCPUWaitMetric                         *prometheus.GaugeVec
-	jobMemKBMetric                           *prometheus.GaugeVec
-	jobMemPercentMetric                      *prometheus.GaugeVec
-	jobSwapKBMetric                          *prometheus.GaugeVec
-	jobSwapPercentMetric                     *prometheus.GaugeVec
-	jobSystemDiskInodePercentMetric          *prometheus.GaugeVec
-	jobSystemDiskPercentMetric               *prometheus.GaugeVec
-	jobEphemeralDiskInodePercentMetric       *prometheus.GaugeVec
-	jobEphemeralDiskPercentMetric            *prometheus.GaugeVec
-	jobPersistentDiskInodePercentMetric      *prometheus.GaugeVec
-	jobPersistentDiskPercentMetric           *prometheus.GaugeVec
-	totalHMTSDBReceivedMessagesMetric        prometheus.Counter
-	totalHMTSDBInvalidMessagesMetric         prometheus.Counter
-	totalHMTSDBDiscardedMessagesMetric       prometheus.Counter
-	lastHMTSDBReceivedMessageTimestampMetric prometheus.Gauge
-	lastHMTSDBScrapeTimestampMetric          prometheus.Gauge
-	lastHMTSDBScrapeDurationSecondsMetric    prometheus.Gauge
+	tsdbListener                           net.Listener
+	jobHealthyMetric                       *prometheus.GaugeVec
+	jobLoadAvg01Metric                     *prometheus.GaugeVec
+	jobCPUSysMetric                        *prometheus.GaugeVec
+	jobCPUUserMetric                       *prometheus.GaugeVec
+	jobCPUWaitMetric                       *prometheus.GaugeVec
+	jobMemKBMetric                         *prometheus.GaugeVec
+	jobMemPercentMetric                    *prometheus.GaugeVec
+	jobSwapKBMetric                        *prometheus.GaugeVec
+	jobSwapPercentMetric                   *prometheus.GaugeVec
+	jobSystemDiskInodePercentMetric        *prometheus.GaugeVec
+	jobSystemDiskPercentMetric             *prometheus.GaugeVec
+	jobEphemeralDiskInodePercentMetric     *prometheus.GaugeVec
+	jobEphemeralDiskPercentMetric          *prometheus.GaugeVec
+	jobPersistentDiskInodePercentMetric    *prometheus.GaugeVec
+	jobPersistentDiskPercentMetric         *prometheus.GaugeVec
+	totalReceivedTSDBMessagesMetric        prometheus.Counter
+	totalInvalidTSDBMessagesMetric         prometheus.Counter
+	totalDiscardedTSDBMessagesMetric       prometheus.Counter
+	lastReceivedTSDBMessageTimestampMetric prometheus.Gauge
+	lastHMTSDBScrapeTimestampMetric        prometheus.Gauge
+	lastHMTSDBScrapeDurationSecondsMetric  prometheus.Gauge
 }
 
 func NewHMTSDBCollector(
@@ -247,11 +247,11 @@ func NewHMTSDBCollector(
 		[]string{"bosh_deployment", "bosh_job_name", "bosh_job_id", "bosh_job_index"},
 	)
 
-	totalHMTSDBReceivedMessagesMetric := prometheus.NewCounter(
+	totalReceivedTSDBMessagesMetric := prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
-			Subsystem: "hm_tsdb",
-			Name:      "received_messages_total",
+			Subsystem: "",
+			Name:      "received_tsdb_messages_total",
 			Help:      "Total number of BOSH HM TSDB received messages.",
 			ConstLabels: prometheus.Labels{
 				"environment": environment,
@@ -259,11 +259,11 @@ func NewHMTSDBCollector(
 		},
 	)
 
-	totalHMTSDBInvalidMessagesMetric := prometheus.NewCounter(
+	totalInvalidTSDBMessagesMetric := prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
-			Subsystem: "hm_tsdb",
-			Name:      "invalid_messages_total",
+			Subsystem: "",
+			Name:      "invalid_tsdb_messages_total",
 			Help:      "Total number of BOSH HM TSDB invalid messages.",
 			ConstLabels: prometheus.Labels{
 				"environment": environment,
@@ -271,11 +271,11 @@ func NewHMTSDBCollector(
 		},
 	)
 
-	totalHMTSDBDiscardedMessagesMetric := prometheus.NewCounter(
+	totalDiscardedTSDBMessagesMetric := prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
-			Subsystem: "hm_tsdb",
-			Name:      "discarded_messages_total",
+			Subsystem: "",
+			Name:      "discarded_tsdb_messages_total",
 			Help:      "Total number of BOSH HM TSDB discarded messages.",
 			ConstLabels: prometheus.Labels{
 				"environment": environment,
@@ -283,11 +283,11 @@ func NewHMTSDBCollector(
 		},
 	)
 
-	lastHMTSDBReceivedMessageTimestampMetric := prometheus.NewGauge(
+	lastReceivedTSDBMessageTimestampMetric := prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
-			Subsystem: "hm_tsdb",
-			Name:      "last_received_message_timestamp",
+			Subsystem: "",
+			Name:      "last_received_tsdb_message_timestamp",
 			Help:      "Number of seconds since 1970 since last received message from BOSH HM TSDB.",
 			ConstLabels: prometheus.Labels{
 				"environment": environment,
@@ -320,28 +320,28 @@ func NewHMTSDBCollector(
 	)
 
 	collector := &HMTSDBCollector{
-		tsdbListener:                             tsdbListener,
-		jobHealthyMetric:                         jobHealthyMetric,
-		jobLoadAvg01Metric:                       jobLoadAvg01Metric,
-		jobCPUSysMetric:                          jobCPUSysMetric,
-		jobCPUUserMetric:                         jobCPUUserMetric,
-		jobCPUWaitMetric:                         jobCPUWaitMetric,
-		jobMemKBMetric:                           jobMemKBMetric,
-		jobMemPercentMetric:                      jobMemPercentMetric,
-		jobSwapKBMetric:                          jobSwapKBMetric,
-		jobSwapPercentMetric:                     jobSwapPercentMetric,
-		jobSystemDiskInodePercentMetric:          jobSystemDiskInodePercentMetric,
-		jobSystemDiskPercentMetric:               jobSystemDiskPercentMetric,
-		jobEphemeralDiskInodePercentMetric:       jobEphemeralDiskInodePercentMetric,
-		jobEphemeralDiskPercentMetric:            jobEphemeralDiskPercentMetric,
-		jobPersistentDiskInodePercentMetric:      jobPersistentDiskInodePercentMetric,
-		jobPersistentDiskPercentMetric:           jobPersistentDiskPercentMetric,
-		totalHMTSDBReceivedMessagesMetric:        totalHMTSDBReceivedMessagesMetric,
-		totalHMTSDBInvalidMessagesMetric:         totalHMTSDBInvalidMessagesMetric,
-		totalHMTSDBDiscardedMessagesMetric:       totalHMTSDBDiscardedMessagesMetric,
-		lastHMTSDBReceivedMessageTimestampMetric: lastHMTSDBReceivedMessageTimestampMetric,
-		lastHMTSDBScrapeTimestampMetric:          lastHMTSDBScrapeTimestampMetric,
-		lastHMTSDBScrapeDurationSecondsMetric:    lastHMTSDBScrapeDurationSecondsMetric,
+		tsdbListener:                           tsdbListener,
+		jobHealthyMetric:                       jobHealthyMetric,
+		jobLoadAvg01Metric:                     jobLoadAvg01Metric,
+		jobCPUSysMetric:                        jobCPUSysMetric,
+		jobCPUUserMetric:                       jobCPUUserMetric,
+		jobCPUWaitMetric:                       jobCPUWaitMetric,
+		jobMemKBMetric:                         jobMemKBMetric,
+		jobMemPercentMetric:                    jobMemPercentMetric,
+		jobSwapKBMetric:                        jobSwapKBMetric,
+		jobSwapPercentMetric:                   jobSwapPercentMetric,
+		jobSystemDiskInodePercentMetric:        jobSystemDiskInodePercentMetric,
+		jobSystemDiskPercentMetric:             jobSystemDiskPercentMetric,
+		jobEphemeralDiskInodePercentMetric:     jobEphemeralDiskInodePercentMetric,
+		jobEphemeralDiskPercentMetric:          jobEphemeralDiskPercentMetric,
+		jobPersistentDiskInodePercentMetric:    jobPersistentDiskInodePercentMetric,
+		jobPersistentDiskPercentMetric:         jobPersistentDiskPercentMetric,
+		totalReceivedTSDBMessagesMetric:        totalReceivedTSDBMessagesMetric,
+		totalInvalidTSDBMessagesMetric:         totalInvalidTSDBMessagesMetric,
+		totalDiscardedTSDBMessagesMetric:       totalDiscardedTSDBMessagesMetric,
+		lastReceivedTSDBMessageTimestampMetric: lastReceivedTSDBMessageTimestampMetric,
+		lastHMTSDBScrapeTimestampMetric:        lastHMTSDBScrapeTimestampMetric,
+		lastHMTSDBScrapeDurationSecondsMetric:  lastHMTSDBScrapeDurationSecondsMetric,
 	}
 	go collector.listenHMTSDB()
 
@@ -367,10 +367,10 @@ func (c *HMTSDBCollector) Collect(ch chan<- prometheus.Metric) {
 	c.jobPersistentDiskInodePercentMetric.Collect(ch)
 	c.jobPersistentDiskPercentMetric.Collect(ch)
 
-	c.totalHMTSDBReceivedMessagesMetric.Collect(ch)
-	c.totalHMTSDBInvalidMessagesMetric.Collect(ch)
-	c.totalHMTSDBDiscardedMessagesMetric.Collect(ch)
-	c.lastHMTSDBReceivedMessageTimestampMetric.Collect(ch)
+	c.totalReceivedTSDBMessagesMetric.Collect(ch)
+	c.totalInvalidTSDBMessagesMetric.Collect(ch)
+	c.totalDiscardedTSDBMessagesMetric.Collect(ch)
+	c.lastReceivedTSDBMessageTimestampMetric.Collect(ch)
 
 	c.lastHMTSDBScrapeTimestampMetric.Set(float64(time.Now().Unix()))
 	c.lastHMTSDBScrapeTimestampMetric.Collect(ch)
@@ -411,10 +411,10 @@ func (c *HMTSDBCollector) Describe(ch chan<- *prometheus.Desc) {
 	c.jobEphemeralDiskPercentMetric.Describe(ch)
 	c.jobPersistentDiskInodePercentMetric.Describe(ch)
 	c.jobPersistentDiskPercentMetric.Describe(ch)
-	c.totalHMTSDBReceivedMessagesMetric.Describe(ch)
-	c.totalHMTSDBInvalidMessagesMetric.Describe(ch)
-	c.totalHMTSDBDiscardedMessagesMetric.Describe(ch)
-	c.lastHMTSDBReceivedMessageTimestampMetric.Describe(ch)
+	c.totalReceivedTSDBMessagesMetric.Describe(ch)
+	c.totalInvalidTSDBMessagesMetric.Describe(ch)
+	c.totalDiscardedTSDBMessagesMetric.Describe(ch)
+	c.lastReceivedTSDBMessageTimestampMetric.Describe(ch)
 	c.lastHMTSDBScrapeTimestampMetric.Describe(ch)
 	c.lastHMTSDBScrapeDurationSecondsMetric.Describe(ch)
 }
@@ -435,14 +435,14 @@ func (c *HMTSDBCollector) handleHMMessage(conn net.Conn) {
 
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
-		c.totalHMTSDBReceivedMessagesMetric.Inc()
-		c.lastHMTSDBReceivedMessageTimestampMetric.Set(float64(time.Now().Unix()))
+		c.totalReceivedTSDBMessagesMetric.Inc()
+		c.lastReceivedTSDBMessageTimestampMetric.Set(float64(time.Now().Unix()))
 
 		hmMessage := scanner.Text()
 		hmMetric, err := c.parseHMMessage(hmMessage)
 		if err != nil {
 			log.Error(err)
-			c.totalHMTSDBInvalidMessagesMetric.Inc()
+			c.totalInvalidTSDBMessagesMetric.Inc()
 			continue
 		}
 
@@ -554,7 +554,7 @@ func (c *HMTSDBCollector) handleHMMessage(conn net.Conn) {
 			).Set(hmMetric.Value)
 		default:
 			log.Errorf("BOSH HM TSDB metric `%s` not supported, discarded", hmMetric.Name)
-			c.totalHMTSDBDiscardedMessagesMetric.Inc()
+			c.totalDiscardedTSDBMessagesMetric.Inc()
 		}
 	}
 }

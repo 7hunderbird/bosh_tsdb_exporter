@@ -35,7 +35,7 @@ This exporter can be deployed using the [Prometheus BOSH Release][prometheus-bos
 
 | Flag / Environment Variable | Required | Default | Description |
 | --------------------------- | -------- | ------- | ----------- |
-| `metrics.namespace`<br />`BOSH_TSDB_EXPORTER_METRICS_NAMESPACE` | No | `bosh` | Metrics Namespace |
+| `metrics.namespace`<br />`BOSH_TSDB_EXPORTER_METRICS_NAMESPACE` | No | `bosh_tsdb` | Metrics Namespace |
 | `metrics.environment`<br />`BOSH_TSDB_EXPORTER_METRICS_ENVIRONMENT` | No | | Environment label to be attached to metrics |
 | `tsdb.listen-address`<br />`BOSH_TSDB_EXPORTER_TSDB_LISTEN_ADDRESS` | No | `:13321` | Address to listen on for the TSDB collector |
 | `web.listen-address`<br />`BOSH_TSDB_EXPORTER_WEB_LISTEN_ADDRESS` | No | `:9194` | Address to listen on for web interface and telemetry |
@@ -51,10 +51,10 @@ The exporter returns the following metrics:
 
 | Metric | Description | Labels |
 | ------ | ----------- | ------ |
-| *metrics.namespace*_hm_tsdb_received_messages_total | Total number of BOSH HM TSDB received messages | `environment` |
-| *metrics.namespace*_hm_tsdb_invalid_messages_total | Total number of BOSH HM TSDB invalid messages | `environment` |
-| *metrics.namespace*_hm_tsdb_discarded_messages_total | Total number of BOSH HM TSDB discarded messages | `environment` |
-| *metrics.namespace*_hm_tsdb_last_received_message_timestamp | Number of seconds since 1970 since last received message from BOSH HM TSDB | `environment` |
+| *metrics.namespace*_received_tsdb_messages_total | Total number of BOSH HM TSDB received messages | `environment` |
+| *metrics.namespace*_invalid_tsdb_messages_total | Total number of BOSH HM TSDB invalid messages | `environment` |
+| *metrics.namespace*_discarded_tsdb_messages_total | Total number of BOSH HM TSDB discarded messages | `environment` |
+| *metrics.namespace*_last_tsdb_received_message_timestamp | Number of seconds since 1970 since last received message from BOSH HM TSDB | `environment` |
 | *metrics.namespace*_last_hm_tsdb_scrape_timestamp | Number of seconds since 1970 since last scrape of BOSH HM TSDB collector | `environment` |
 | *metrics.namespace*_last_hm_tsdb_scrape_duration_seconds | Duration of the last scrape of BOSH HM TSDB collector | `environment` |
 
