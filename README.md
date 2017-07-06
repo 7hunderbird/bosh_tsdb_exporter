@@ -25,6 +25,14 @@ $ go install github.com/cloudfoundry-community/bosh_tsdb_exporter
 $ bosh_tsdb_exporter <flags>
 ```
 
+### Docker
+
+To run the BOSH TSDB exporter as a Docker container, run:
+
+```bash
+docker run -p 9194:9194 -p 13321:13321 cfcommunity/bosh-tsdb-exporter <flags>
+```
+
 ### BOSH
 
 This exporter can be deployed using the [Prometheus BOSH Release][prometheus-boshrelease].
