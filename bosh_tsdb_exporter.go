@@ -11,7 +11,7 @@ import (
 	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/version"
 
-	"github.com/cloudfoundry-community/bosh_tsdb_exporter/collectors"
+	"github.com/bosh-prometheus/bosh_tsdb_exporter/collectors"
 )
 
 var (

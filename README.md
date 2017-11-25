@@ -1,10 +1,10 @@
-# BOSH TSDB Prometheus Exporter [![Build Status](https://travis-ci.org/cloudfoundry-community/bosh_tsdb_exporter.png)](https://travis-ci.org/cloudfoundry-community/bosh_tsdb_exporter)
+# BOSH TSDB Prometheus Exporter [![Build Status](https://travis-ci.org/bosh-prometheus/bosh_tsdb_exporter.png)](https://travis-ci.org/bosh-prometheus/bosh_tsdb_exporter)
 
 A [Prometheus][prometheus] exporter for [BOSH OpenTSDB Health Monitor plugin][bosh-tsdb] metrics. Please refer to the [FAQ][faq] for general questions about this exporter.
 
 ## Architecture overview
 
-![](https://cdn.rawgit.com/cloudfoundry-community/bosh_tsdb_exporter/master/architecture/architecture.svg)
+![](https://cdn.rawgit.com/bosh-prometheus/bosh_tsdb_exporter/master/architecture/architecture.svg)
 
 ## Installation
 
@@ -21,7 +21,7 @@ $ ./bosh_tsdb_exporter <flags>
 Using the standard `go install` (you must have [Go][golang] already installed in your local machine):
 
 ```bash
-$ go install github.com/cloudfoundry-community/bosh_tsdb_exporter
+$ go install github.com/bosh-prometheus/bosh_tsdb_exporter
 $ bosh_tsdb_exporter <flags>
 ```
 
@@ -30,7 +30,7 @@ $ bosh_tsdb_exporter <flags>
 To run the BOSH TSDB exporter as a Docker container, run:
 
 ```bash
-docker run -p 9194:9194 -p 13321:13321 cfcommunity/bosh-tsdb-exporter <flags>
+docker run -p 9194:9194 -p 13321:13321 boshprometheus/bosh-tsdb-exporter <flags>
 ```
 
 ### BOSH
@@ -94,12 +94,12 @@ Refer to the [contributing guidelines][contributing].
 
 Apache License 2.0, see [LICENSE][license].
 
-[binaries]: https://github.com/cloudfoundry-community/bosh_tsdb_exporter/releases
+[binaries]: https://github.com/bosh-prometheus/bosh_tsdb_exporter/releases
 [bosh]: https://bosh.io
 [bosh-tsdb]: http://bosh.io/docs/hm-config.html#tsdb
-[contributing]: https://github.com/cloudfoundry-community/bosh_tsdb_exporter/blob/master/CONTRIBUTING.md
-[faq]: https://github.com/cloudfoundry-community/bosh_tsdb_exporter/blob/master/FAQ.md
+[contributing]: https://github.com/bosh-prometheus/bosh_tsdb_exporter/blob/master/CONTRIBUTING.md
+[faq]: https://github.com/bosh-prometheusy/bosh_tsdb_exporter/blob/master/FAQ.md
 [golang]: https://golang.org/
-[license]: https://github.com/cloudfoundry-community/bosh_tsdb_exporter/blob/master/LICENSE
+[license]: https://github.com/bosh-prometheus/bosh_tsdb_exporter/blob/master/LICENSE
 [prometheus]: https://prometheus.io/
-[prometheus-boshrelease]: https://github.com/cloudfoundry-community/prometheus-boshrelease
+[prometheus-boshrelease]: https://github.com/bosh-prometheus/prometheus-boshrelease

@@ -27,6 +27,6 @@ We will be glad to address any questions not answered here. Please, just open a 
 [bosh_agent]: https://bosh.io/docs/bosh-components.html#agent
 [bosh_director]: http://bosh.io/docs/bosh-components.html#director
 [bosh_tsdb]: http://bosh.io/docs/hm-config.html#tsdb
-[bosh_tsdb_exporter_metrics]: https://github.com/cloudfoundry-community/bosh_exporter#metrics
+[bosh_tsdb_exporter_metrics]: https://github.com/bosh-prometheus/bosh_tsdb_exporter#metrics
 [node_exporter]: https://github.com/prometheus/node_exporter
-[issues]: https://github.com/cloudfoundry-community/bosh_tsdb_exporter/issues
+[issues]: https://github.com/bosh-prometheus/bosh_tsdb_exporter/issues
