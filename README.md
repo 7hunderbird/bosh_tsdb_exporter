@@ -98,7 +98,7 @@ Apache License 2.0, see [LICENSE][license].
 [bosh]: https://bosh.io
 [bosh-tsdb]: http://bosh.io/docs/hm-config.html#tsdb
 [contributing]: https://github.com/bosh-prometheus/bosh_tsdb_exporter/blob/master/CONTRIBUTING.md
-[faq]: https://github.com/bosh-prometheusy/bosh_tsdb_exporter/blob/master/FAQ.md
+[faq]: https://github.com/bosh-prometheus/bosh_tsdb_exporter/blob/master/FAQ.md
 [golang]: https://golang.org/
 [license]: https://github.com/bosh-prometheus/bosh_tsdb_exporter/blob/master/LICENSE
 [prometheus]: https://prometheus.io/
