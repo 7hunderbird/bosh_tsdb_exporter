@@ -1,7 +1,6 @@
 package collectors_test
 
 import (
-	"flag"
 	"fmt"
 	"net"
 	"time"
@@ -10,13 +9,14 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/log"
 
 	. "github.com/bosh-prometheus/bosh_tsdb_exporter/collectors"
 	. "github.com/bosh-prometheus/bosh_tsdb_exporter/utils/test_matchers"
 )
 
 func init() {
-	flag.Set("log.level", "fatal")
+	log.Base().SetLevel("fatal")
 }
 
 var _ = Describe("HMTSDBCollector", func() {
