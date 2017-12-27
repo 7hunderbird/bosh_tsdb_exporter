@@ -1,8 +1,6 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -10,83 +8,51 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/version"
+	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/bosh-prometheus/bosh_tsdb_exporter/collectors"
 )
 
 var (
-	metricsNamespace = flag.String(
-		"metrics.namespace", "bosh_tsdb",
-		"Metrics Namespace ($BOSH_TSDB_EXPORTER_METRICS_NAMESPACE).",
-	)
+	metricsNamespace = kingpin.Flag(
+		"metrics.namespace", "Metrics Namespace ($BOSH_TSDB_EXPORTER_METRICS_NAMESPACE)",
+	).Envar("BOSH_TSDB_EXPORTER_METRICS_NAMESPACE").Default("bosh_tsdb").String()
 
-	metricsEnvironment = flag.String(
-		"metrics.environment", "",
-		"Environment label to be attached to metrics ($BOSH_TSDB_EXPORTER_METRICS_ENVIRONMENT).",
-	)
+	metricsEnvironment = kingpin.Flag(
+		"metrics.environment", "Environment label to be attached to metrics ($BOSH_TSDB_EXPORTER_METRICS_ENVIRONMENT)",
+	).Envar("BOSH_TSDB_EXPORTER_METRICS_ENVIRONMENT").Required().String()
 
-	tsdbListenAddress = flag.String(
-		"tsdb.listen-address", ":13321",
-		"Address to listen on for the TSDB collector ($BOSH_TSDB_EXPORTER_TSDB_LISTEN_ADDRESS).",
-	)
+	tsdbListenAddress = kingpin.Flag(
+		"tsdb.listen-address", "Address to listen on for the TSDB collector ($BOSH_TSDB_EXPORTER_TSDB_LISTEN_ADDRESS)",
+	).Envar("BOSH_TSDB_EXPORTER_TSDB_LISTEN_ADDRESS").Default(":13321").String()
 
-	showVersion = flag.Bool(
-		"version", false,
-		"Print version information.",
-	)
+	listenAddress = kingpin.Flag(
+		"web.listen-address", "Address to listen on for web interface and telemetry ($BOSH_TSDB_EXPORTER_WEB_LISTEN_ADDRESS)",
+	).Envar("BOSH_TSDB_EXPORTER_WEB_LISTEN_ADDRESS").Default(":9194").String()
 
-	listenAddress = flag.String(
-		"web.listen-address", ":9194",
-		"Address to listen on for web interface and telemetry ($BOSH_TSDB_EXPORTER_WEB_LISTEN_ADDRESS).",
-	)
+	metricsPath = kingpin.Flag(
+		"web.telemetry-path", "Path under which to expose Prometheus metrics ($BOSH_TSDB_EXPORTER_WEB_TELEMETRY_PATH)",
+	).Envar("BOSH_TSDB_EXPORTER_WEB_TELEMETRY_PATH").Default("/metrics").String()
 
-	metricsPath = flag.String(
-		"web.telemetry-path", "/metrics",
-		"Path under which to expose Prometheus metrics ($BOSH_TSDB_EXPORTER_WEB_TELEMETRY_PATH).",
-	)
+	authUsername = kingpin.Flag(
+		"web.auth.username", "Username for web interface basic auth ($BOSH_TSDB_EXPORTER_WEB_AUTH_USERNAME)",
+	).Envar("BOSH_TSDB_EXPORTER_WEB_AUTH_USERNAME").String()
 
-	authUsername = flag.String(
-		"web.auth.username", "",
-		"Username for web interface basic auth ($BOSH_TSDB_EXPORTER_WEB_AUTH_USERNAME).",
-	)
+	authPassword = kingpin.Flag(
+		"web.auth.password", "Password for web interface basic auth ($BOSH_TSDB_EXPORTER_WEB_AUTH_PASSWORD)",
+	).Envar("BOSH_TSDB_EXPORTER_WEB_AUTH_PASSWORD").String()
 
-	authPassword = flag.String(
-		"web.auth.password", "",
-		"Password for web interface basic auth ($BOSH_TSDB_EXPORTER_WEB_AUTH_PASSWORD).",
-	)
+	tlsCertFile = kingpin.Flag(
+		"web.tls.cert_file", "Path to a file that contains the TLS certificate (PEM format). If the certificate is signed by a certificate authority, the file should be the concatenation of the server's certificate, any intermediates, and the CA's certificate ($BOSH_TSDB_EXPORTER_WEB_TLS_CERTFILE)",
+	).Envar("BOSH_TSDB_EXPORTER_WEB_TLS_CERTFILE").ExistingFile()
 
-	tlsCertFile = flag.String(
-		"web.tls.cert_file", "",
-		"Path to a file that contains the TLS certificate (PEM format). If the certificate is signed by a certificate authority, the file should be the concatenation of the server's certificate, any intermediates, and the CA's certificate ($BOSH_TSDB_EXPORTER_WEB_TLS_CERTFILE).",
-	)
-
-	tlsKeyFile = flag.String(
-		"web.tls.key_file", "",
-		"Path to a file that contains the TLS private key (PEM format) ($BOSH_TSDB_EXPORTER_WEB_TLS_KEYFILE).",
-	)
+	tlsKeyFile = kingpin.Flag(
+		"web.tls.key_file", "Path to a file that contains the TLS private key (PEM format) ($BOSH_TSDB_EXPORTER_WEB_TLS_KEYFILE)",
+	).Envar("BOSH_TSDB_EXPORTER_WEB_TLS_KEYFILE").ExistingFile()
 )
 
 func init() {
 	prometheus.MustRegister(version.NewCollector(*metricsNamespace))
-}
-
-func overrideFlagsWithEnvVars() {
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_METRICS_NAMESPACE", metricsNamespace)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_METRICS_ENVIRONMENT", metricsEnvironment)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_TSDB_LISTEN_ADDRES", tsdbListenAddress)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_WEB_LISTEN_ADDRESS", listenAddress)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_WEB_TELEMETRY_PATH", metricsPath)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_WEB_AUTH_USERNAME", authUsername)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_WEB_AUTH_PASSWORD", authPassword)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_WEB_TLS_CERTFILE", tlsCertFile)
-	overrideWithEnvVar("BOSH_TSDB_EXPORTER_WEB_TLS_KEYFILE", tlsKeyFile)
-}
-
-func overrideWithEnvVar(name string, value *string) {
-	envValue := os.Getenv(name)
-	if envValue != "" {
-		*value = envValue
-	}
 }
 
 type basicAuthHandler struct {
@@ -122,13 +88,10 @@ func prometheusHandler() http.Handler {
 }
 
 func main() {
-	flag.Parse()
-	overrideFlagsWithEnvVars()
-
-	if *showVersion {
-		fmt.Fprintln(os.Stdout, version.Print("bosh_tsdb_exporter"))
-		os.Exit(0)
-	}
+	log.AddFlags(kingpin.CommandLine)
+	kingpin.Version(version.Print("bosh_tsdb_exporter"))
+	kingpin.HelpFlag.Short('h')
+	kingpin.Parse()
 
 	log.Infoln("Starting bosh_tsdb_exporter", version.Info())
 	log.Infoln("Build context", version.BuildContext())

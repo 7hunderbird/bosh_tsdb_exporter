@@ -44,7 +44,7 @@ This exporter can be deployed using the [Prometheus BOSH Release][prometheus-bos
 | Flag / Environment Variable | Required | Default | Description |
 | --------------------------- | -------- | ------- | ----------- |
 | `metrics.namespace`<br />`BOSH_TSDB_EXPORTER_METRICS_NAMESPACE` | No | `bosh_tsdb` | Metrics Namespace |
-| `metrics.environment`<br />`BOSH_TSDB_EXPORTER_METRICS_ENVIRONMENT` | No | | Environment label to be attached to metrics |
+| `metrics.environment`<br />`BOSH_TSDB_EXPORTER_METRICS_ENVIRONMENT` | Yes | | Environment label to be attached to metrics |
 | `tsdb.listen-address`<br />`BOSH_TSDB_EXPORTER_TSDB_LISTEN_ADDRESS` | No | `:13321` | Address to listen on for the TSDB collector |
 | `web.listen-address`<br />`BOSH_TSDB_EXPORTER_WEB_LISTEN_ADDRESS` | No | `:9194` | Address to listen on for web interface and telemetry |
 | `web.telemetry-path`<br />`BOSH_TSDB_EXPORTER_WEB_TELEMETRY_PATH` | No | `/metrics` | Path under which to expose Prometheus metrics |
